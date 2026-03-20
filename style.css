@@ -1,3 +1,7 @@
 .crypted {
     font-family : "Wingdings";
 }
+
+#reset-bttn {
+    display: none;
+}

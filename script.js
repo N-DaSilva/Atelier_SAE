@@ -3,14 +3,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const inputZone = document.getElementById("input-zone");
     const generatedStringZone = document.getElementById("generated-string");
     const generateBttn = document.getElementById("generate-bttn");
+    const resetBttn = document.getElementById("reset-bttn");
     const roundsElement = document.getElementById("rounds");
+
+    let playing = false;
 
     let code = "";
     let inputIndex = 0;
-    let errors = 0;
     let rounds = 1;
     let maxRounds = 5;
 
+   
     const timerElement = document.getElementById("timer");
     let counter = 5 * 1000; // 5 seconds
     const maxTime = maxRounds * 30 * 1000; // 30 secondes par tour
@@ -26,13 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const generateString = () => {
-        console.log("reset");
-        if (rounds >= maxRounds){
-            rounds = 0;
-            generateBttn.innerHTML = "Nouveau code";
-            document.getElementById("result").innerHTML = "";
-        }
-
         let generatedString = "";
         let generatedHTML = "";
         for (let i = 0; i < inputValues.length; i++) {
@@ -43,39 +39,65 @@ document.addEventListener("DOMContentLoaded", () => {
         generatedStringZone.innerHTML = generatedHTML;
         code = generatedString;
         inputIndex = 0;
-        errors = 0;
         inputZone.innerHTML = "";
 
         console.log(code);
     }
 
-    generateBttn.addEventListener('click', generateString);
+    const stop = (action) => {
+        playing = false;
+        endTimer();
+        // generateBttn.style.display = "none";
+        resetBttn.style.display = "block";
+        generatedStringZone.innerHTML = "";
+        inputZone.innerHTML = "";
+
+        if (action == "lose") {
+            timerElement.textContent = "Game over !";
+        } else if (action == "win") {
+            timerElement.textContent = "Bravo !"
+        }
+    }
+
+    const reset = () => {
+        rounds = 1;
+        // generateBttn.style.display = "block";
+        resetBttn.style.display = "none";
+        roundsElement.textContent = `Round: ${rounds} / ${maxRounds}`;
+        remainingTime = maxTime;
+        playing = true;
+
+        generateString();
+        startTimer();
+    }
+
+    // generateBttn.addEventListener('click', generateString);
+    resetBttn.addEventListener('click', reset);
 
     document.addEventListener("keydown", (e) => {
+        if (!playing) return;
+
         const input = e.key.toUpperCase();
         if (inputValues.includes(input)) {
             inputZone.innerHTML += input;
 
-            if (input == code[inputIndex]){
+            if (input == code[inputIndex]) {
                 console.log(input + " is correct");
-                document.getElementById("char"+inputIndex).style.color = "green";
-                inputIndex ++;
+                document.getElementById("char" + inputIndex).style.color = "green";
+                inputIndex++;
 
                 if (inputIndex >= code.length) {
                     generateString();
-                    rounds ++;
+                    rounds++;
                     updateRounds();
                     addTime(5); // Add 5 seconds for the next round
-                    if (rounds >= maxRounds){
-                        generateBttn.innerHTML = "Rejouer";
-                        document.getElementById("result").innerHTML = "Bravo !"
+                    if (rounds >= maxRounds) {
+                        stop("win");
                     }
                 }
             } else {
-                errors ++;
                 reduceTime(2); // Reduce time by 2 seconds
-                document.getElementById("char"+inputIndex).style.color = "red";
-                console.log(input + " incorrect. " + errors + " erreur(s)");
+                document.getElementById("char" + inputIndex).style.color = "red";
             }
         }
     })
@@ -87,6 +109,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (counter <= 0) {
             clearInterval(startingCounter);
             startTimer();
+            playing = true;
+            generateString();
         }
     }, 1000);
 
@@ -95,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
             timerElement.textContent = `Time remaining: ${Math.ceil(remainingTime / 1000)} seconds`;
             remainingTime -= 1000;
             if (remainingTime < 0) {
-                endTimer();
+                stop("lose");
             }
         }, 1000);
     }
@@ -103,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const reduceTime = (seconds) => {
         remainingTime -= seconds * 1000;
         if (remainingTime < 0) {
-            endTimer();
+            stop("lose");
         }
     }
 
@@ -113,6 +137,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const endTimer = () => {
         clearInterval(timer);
-        timerElement.textContent = "Time's up ! Game Over !";
     }
 })
