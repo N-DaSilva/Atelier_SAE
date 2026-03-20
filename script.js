@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const inputValues = 'AZERTYUIOP'.split('');
+    const inputValues = 'QSDFGHJKLM'.split('');
     const inputZone = document.getElementById("input-zone");
     const generatedStringZone = document.getElementById("generated-string");
     const generateBttn = document.getElementById("generate-bttn");
@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let code = "";
     let inputIndex = 0;
     let errors = 0;
+    let rounds = 1;
 
     const getRandomInt = (max) => {
         return Math.floor(Math.random() * max);
@@ -14,6 +15,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const generateString = () => {
         console.log("reset");
+        if (rounds >= 5){
+            rounds = 0;
+            generateBttn.innerHTML = "Nouveau code";
+            document.getElementById("result").innerHTML = "";
+        }
 
         let generatedString = "";
         let generatedHTML = "";
@@ -27,6 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
         inputIndex = 0;
         errors = 0;
         inputZone.innerHTML = "";
+
+        console.log(code);
     }
 
     generateBttn.addEventListener('click', generateString);
@@ -43,6 +51,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (inputIndex >= code.length) {
                     generateString();
+                    rounds ++;
+                    if (rounds >= 5){
+                        generateBttn.innerHTML = "Rejouer";
+                        document.getElementById("result").innerHTML = "Bravo !"
+                    }
                 }
             } else {
                 errors ++;
