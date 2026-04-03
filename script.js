@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const inputValues = 'QSDFGHJKLM'.split('');
     const inputZone = document.getElementById("input-zone");
     const generatedStringZone = document.getElementById("generated-string");
-    const generateBttn = document.getElementById("generate-bttn");
     const resetBttn = document.getElementById("reset-bttn");
     const roundsElement = document.getElementById("rounds");
 
@@ -15,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
    
     const timerElement = document.getElementById("timer");
+    const timerBarElement = document.getElementById("timer-bar");
     let counter = 5 * 1000; // 5 seconds
     const maxTime = maxRounds * 30 * 1000; // 30 secondes par tour
     let remainingTime = maxTime;
@@ -40,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
         code = generatedString;
         inputIndex = 0;
         inputZone.innerHTML = "";
+        document.getElementById("char" + inputIndex).style.color = "yellow";
 
         console.log(code);
     }
@@ -53,9 +54,9 @@ document.addEventListener("DOMContentLoaded", () => {
         inputZone.innerHTML = "";
 
         if (action == "lose") {
-            timerElement.textContent = "Game over !";
+            timerElement.textContent = "0";
         } else if (action == "win") {
-            timerElement.textContent = "Bravo !"
+            timerElement.textContent = ":)"
         }
     }
 
@@ -82,8 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
             inputZone.innerHTML += input;
 
             if (input == code[inputIndex]) {
-                console.log(input + " is correct");
-                document.getElementById("char" + inputIndex).style.color = "green";
+                document.getElementById("char" + inputIndex).style.color = "#00ff00";
                 inputIndex++;
 
                 if (inputIndex >= code.length) {
@@ -94,6 +94,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (rounds >= maxRounds) {
                         stop("win");
                     }
+                } else {
+                    document.getElementById("char" + inputIndex).style.color = "yellow";
                 }
             } else {
                 reduceTime(2); // Reduce time by 2 seconds
@@ -104,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Timer logic
     const startingCounter = setInterval(() => {
-        timerElement.textContent = `Starting in : ${Math.ceil(counter / 1000)}`;
+        timerElement.textContent = Math.ceil(counter / 1000);
         counter -= 1000;
         if (counter <= 0) {
             clearInterval(startingCounter);
@@ -116,7 +118,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const startTimer = () => {
         timer = setInterval(() => {
-            timerElement.textContent = `Time remaining: ${Math.ceil(remainingTime / 1000)} seconds`;
+            timerElement.textContent = Math.ceil(remainingTime / 1000);
+            timerBarElement.style.width = (100 * remainingTime) / maxTime + '%'; 
             remainingTime -= 1000;
             if (remainingTime < 0) {
                 stop("lose");

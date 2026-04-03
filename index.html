@@ -9,17 +9,24 @@
 <body>
     <!-- <h1>Atelier SAE</h1> -->
 
-    <div class="timer-bar"></div>
-    <div class="timer-infos">
-        <img src="medias/timer.svg" alt="">
+    <div class="timer-bar">
+        <div class="timer-bar-bg"></div>
+        <div id="timer-bar" class="timer-bar-fill"></div>
+    </div>
+
+    <div class="timer">
         <p id="timer"></p>
     </div>
-    <p id="rounds"></p> <!-- dev only -->
 
-    <p id="generated-string" class="crypted"></p>
-    <p id="input-zone" class="crypted"></p>
+    <p id="rounds" class="hidden"></p> <!-- dev only -->
+
+    <div class="center">
+        <p id="generated-string" class="crypted"></p>
+        <button id="reset-bttn">Rejouer</button>
+    </div>
+
+    <p id="input-zone" class="crypted hidden"></p>
     <!-- <button id="generate-bttn">Nouveau code</button> -->
-    <button id="reset-bttn">Rejouer</button>
 
     <script src="script.js"></script>
 </body>

@@ -1,30 +1,76 @@
 body{
     margin : 0;
+    background-color: black;
+}
+
+p {
+    color: white;
+    text-align: center;
+    margin: 0;
+}
+
+.center {
+    display: flex;
+    height: 500px;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.hidden {
+    display: none;
 }
 
 .crypted {
     font-family : "Wingdings";
+    font-size: 5rem;
+    letter-spacing: 1.5rem;
 }
 
 .timer-bar {
+    position: relative;
     width: 100%;
     min-height: 20px;
     height: 4vh;
+}
+
+.timer-bar-bg {
+    position: absolute;
     background-color: #ddd;
+    width: 100%;
+    height: 100%;
+}
+.timer-bar-fill {
+    position: absolute;
+    background-color: #0f0;
+    width: 100%;
+    height: 100%;
 }
 
-.timer-infos{
+.timer {
+    font-size: 1.5rem;
+
+    margin: 20px;
+    padding: 10px;
+    height: 30px;
+    width: 30px;
+    border: solid 2px white;
+    border-radius: 30px;
     display: flex;
-    justify-content: flex-start;
     align-items: center;
-    gap: 10px;
-    margin-left: 0.5vw;
+    justify-content: center;
 }
 
-.timer-infos img{
-    width: 5vh;
-    height: 5vh;
-}
 #reset-bttn {
     display: none;
+    background-color: transparent;
+    font-size: large;
+    color: white;
+    border: solid white 2px;
+    padding: 10px 15px;
+    border-radius: 25px;
+}
+
+#reset-bttn:hover {
+    background-color: #ffffff55;
 }
