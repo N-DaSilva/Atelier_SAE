@@ -49,6 +49,7 @@ p {
 
 .timer {
     font-size: 1.5rem;
+    font-family: 'Orbitron';
 
     margin: 20px;
     padding: 10px;
@@ -73,4 +74,9 @@ p {
 
 #reset-bttn:hover {
     background-color: #ffffff55;
+}
+
+canvas {
+    position: absolute;
+    z-index: -1;
 }
