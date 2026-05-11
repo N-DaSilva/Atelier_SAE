@@ -1,5 +1,17 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const inputValues = 'L12JM680*)'.split('');
+    const keyMaps = [
+        { 1: "L", 2: "1", 3: "2", 4: "J", 5: "M", 6: "6", 7: "8", 8: "0", 9: "*", 0: ")" },
+        { 1: "M", 2: "J", 3: "8", 4: "L", 5: "1", 6: ")", 7: "0", 8: "6", 9: "2", 0: "*" },
+        { 1: "1", 2: "J", 3: "6", 4: "L", 5: "0", 6: "*", 7: "8", 8: "M", 9: ")", 0: "2" },
+        { 1: "6", 2: "*", 3: ")", 4: "M", 5: "2", 6: "1", 7: "J", 8: "L", 9: "0", 0: "8" },
+        { 1: "8", 2: "1", 3: "M", 4: "0", 5: "*", 6: "L", 7: ")", 8: "J", 9: "6", 0: "2" },
+        { 1: "*", 2: "6", 3: ")", 4: "M", 5: "J", 6: "0", 7: "L", 8: "2", 9: "1", 0: "8" }
+    ];
+    let availableMaps = keyMaps;
+    let currentMap;
+
+    const codeValues = 'L12JM680*)'.split('');
+    const inputValues = '1234567890'.split('');
     const inputZone = document.getElementById("input-zone");
     const generatedStringZone = document.getElementById("generated-string");
     const resetBttn = document.getElementById("reset-bttn");
@@ -34,17 +46,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const generateString = () => {
+        const chosenMapIndex = getRandomInt(availableMaps.length);
+        currentMap = availableMaps.splice(chosenMapIndex, 1)[0];
+        console.log(currentMap, availableMaps);
+
         let generatedString = "";
         let generatedHTML = "";
-        let randomIndex = getRandomInt(inputValues.length);
+        let randomIndex = getRandomInt(codeValues.length);
 
-        for (let i = 0; i < inputValues.length; i++) {
+        for (let i = 0; i < codeValues.length; i++) {
             if (generatedString.length > 0) {
-                while (inputValues[randomIndex] == generatedString[i-1]) {
-                    randomIndex = getRandomInt(inputValues.length);
+                while (codeValues[randomIndex] == generatedString[i-1]) {
+                    randomIndex = getRandomInt(codeValues.length);
                 }
             }
-            generatedString += inputValues[randomIndex];
+            generatedString += codeValues[randomIndex];
             generatedHTML += `<span id="char${i}">${generatedString[i]}</span>`
         }
 
@@ -76,14 +92,35 @@ document.addEventListener("DOMContentLoaded", () => {
         resetBttn.style.display = "none";
         roundsElement.textContent = `Round: ${rounds} / ${maxRounds}`;
         remainingTime = maxTime;
+        availableMaps = keyMaps;
         playing = true;
 
         generateString();
         startTimer();
     }
 
-
     resetBttn.addEventListener('click', reset);
+
+    const incorrectCharacter = (index) => {
+        const charElement = document.getElementById("char" + index);
+
+        charElement.style.color = "#f00";
+
+        charElement.classList.remove("animate");
+        charElement.classList.add("animate");
+        charElement.addEventListener("animationend", () => {
+            charElement.classList.remove("animate");
+        }, { once: true });
+    }
+
+    const checkCorrectInput = (input, correctKey, map) => {
+        let isCorrectInput = false
+        Object.keys(map).forEach(key => {
+            if ((key == input) && (map[key] == correctKey)) {
+                isCorrectInput = true;          }
+        });
+        return isCorrectInput;
+    }
 
     document.addEventListener("keydown", (e) => {
         if (!playing) return;
@@ -91,9 +128,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const input = e.key.toUpperCase();
         if (inputValues.includes(input)) {
             inputZone.innerHTML += input;
+            console.log(checkCorrectInput(input, code[inputIndex], currentMap));
 
-            if (input == code[inputIndex]) {
+            if (checkCorrectInput(input, code[inputIndex], currentMap)) {
                 correctSound.currentTime = 0;
+                addTime(3);
                 correctSound.play();
                 document.getElementById("char" + inputIndex).style.color = "#00ff00";
                 inputIndex++;
@@ -102,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     generateString();
                     rounds++;
                     updateRounds();
-                    addTime(5); // Add 5 seconds for the next round
+                    addTime(30); // Add 30 seconds for the next round
                     if (rounds >= maxRounds) {
                         stop("win");
                     }
@@ -114,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 errorSound.currentTime = 0;
                 errorSound.play();
                 timerBarElement.style.backgroundColor = "#f00";
-                document.getElementById("char" + inputIndex).style.color = "#f00";
+                incorrectCharacter(inputIndex);
             }
         }
     })

@@ -81,3 +81,23 @@ canvas {
     position: absolute;
     z-index: -1;
 }
+
+.animate {
+        display: inline-block;
+        animation: shake 0.15s ease-in-out 3;
+}
+
+@keyframes shake {
+        0%,
+        100% {
+                transform: translateX(0);
+        }
+
+        25% {
+                transform: translateX(-10px);
+        }
+
+        75% {
+                transform: translateX(10px);
+        }
+}
