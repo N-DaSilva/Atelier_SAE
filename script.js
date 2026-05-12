@@ -1,16 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
     const keyMaps = [
-        { 1: "L", 2: "1", 3: "2", 4: "J", 5: "M", 6: "6", 7: "8", 8: "0", 9: "*", 0: ")" },
-        { 1: "M", 2: "J", 3: "8", 4: "L", 5: "1", 6: ")", 7: "0", 8: "6", 9: "2", 0: "*" },
-        { 1: "1", 2: "J", 3: "6", 4: "L", 5: "0", 6: "*", 7: "8", 8: "M", 9: ")", 0: "2" },
-        { 1: "6", 2: "*", 3: ")", 4: "M", 5: "2", 6: "1", 7: "J", 8: "L", 9: "0", 0: "8" },
-        { 1: "8", 2: "1", 3: "M", 4: "0", 5: "*", 6: "L", 7: ")", 8: "J", 9: "6", 0: "2" },
-        { 1: "*", 2: "6", 3: ")", 4: "M", 5: "J", 6: "0", 7: "L", 8: "2", 9: "1", 0: "8" }
+        { "1": "A", "2": "R", "3": "C", "4": "H", "5": "E", "6": "U", "7": "S", "8": "D", "9": "B", "0": "N" },
+        { "1": "P", "2": "A", "3": "U", "4": "L", "5": "I", "6": "N", "7": "E", "8": ".", "9": "_", "0": "7" },
+        { "1": "I", "2": "N", "3": "E", "4": "S", "5": "K", "6": "O", "7": "_", "8": "0", "9": "1", "0": "3" }
     ];
-    let availableMaps = keyMaps;
+    let availableMaps = structuredClone(keyMaps);
     let currentMap;
 
-    const codeValues = 'L12JM680*)'.split('');
     const inputValues = '1234567890'.split('');
     const inputZone = document.getElementById("input-zone");
     const generatedStringZone = document.getElementById("generated-string");
@@ -22,12 +18,13 @@ document.addEventListener("DOMContentLoaded", () => {
     let code = "";
     let inputIndex = 0;
     let rounds = 1;
-    let maxRounds = 5;
+    let maxRounds = 3;
+    let corruptionInterval;
 
 
     const timerElement = document.getElementById("timer");
     const timerBarElement = document.getElementById("timer-bar");
-    
+
     let counter = 6 * 1000; // 5 seconds
     const maxTime = maxRounds * 30 * 1000; // 30 secondes par tour
     let remainingTime = maxTime;
@@ -48,7 +45,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const generateString = () => {
         const chosenMapIndex = getRandomInt(availableMaps.length);
         currentMap = availableMaps.splice(chosenMapIndex, 1)[0];
-        console.log(currentMap, availableMaps);
+        console.log(keyMaps);
+        console.log(availableMaps);
+
+        let codeValues = '';
+
+        for (const [key, value] of Object.entries(currentMap)) {
+            codeValues += value;
+        }
 
         let generatedString = "";
         let generatedHTML = "";
@@ -56,19 +60,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
         for (let i = 0; i < codeValues.length; i++) {
             if (generatedString.length > 0) {
-                while (codeValues[randomIndex] == generatedString[i-1]) {
+                while (generatedString.indexOf(codeValues[randomIndex])>-1) {
                     randomIndex = getRandomInt(codeValues.length);
                 }
             }
             generatedString += codeValues[randomIndex];
-            generatedHTML += `<span id="char${i}">${generatedString[i]}</span>`
+            const randomDelayMs = getRandomInt(900);
+            generatedHTML += `<span id="char${i}" data-original="${generatedString[i]}" style="--char-delay:${randomDelayMs}ms">${generatedString[i]}</span>`
         }
 
         generatedStringZone.innerHTML = generatedHTML;
         code = generatedString;
         inputIndex = 0;
         inputZone.innerHTML = "";
-        document.getElementById("char" + inputIndex).style.color = "yellow";
+        applyRoundAnimation(rounds);
+        document.getElementById("char" + inputIndex).classList.add("current-letter");
 
         console.log(code);
     }
@@ -76,6 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const stop = (action) => {
         playing = false;
         endTimer();
+        stopCorruptionEffect();
         resetBttn.style.display = "block";
         generatedStringZone.innerHTML = "";
         inputZone.innerHTML = "";
@@ -92,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
         resetBttn.style.display = "none";
         roundsElement.textContent = `Round: ${rounds} / ${maxRounds}`;
         remainingTime = maxTime;
-        availableMaps = keyMaps;
+        availableMaps = structuredClone(keyMaps);
         playing = true;
 
         generateString();
@@ -117,9 +124,55 @@ document.addEventListener("DOMContentLoaded", () => {
         let isCorrectInput = false
         Object.keys(map).forEach(key => {
             if ((key == input) && (map[key] == correctKey)) {
-                isCorrectInput = true;          }
+                isCorrectInput = true;
+            }
         });
         return isCorrectInput;
+    }
+
+    const stopCorruptionEffect = () => {
+        if (corruptionInterval) {
+            clearInterval(corruptionInterval);
+            corruptionInterval = null;
+        }
+    }
+
+    const startCorruptionEffect = () => {
+        stopCorruptionEffect();
+        const symbols = ['@', '#'];
+
+        corruptionInterval = setInterval(() => {
+            const spans = generatedStringZone.querySelectorAll('span');
+            spans.forEach((span, index) => {
+                const originalChar = code[index] || span.dataset.original || '';
+                if (span.classList.contains('correct-letter') || span.classList.contains('current-letter')) {
+                    span.textContent = originalChar;
+                    return;
+                }
+
+                const roll = Math.random();
+                if (roll < 0.16) {
+                    span.textContent = '';
+                } else if (roll < 0.42) {
+                    span.textContent = symbols[getRandomInt(symbols.length)];
+                } else {
+                    span.textContent = originalChar;
+                }
+            });
+        }, 120);
+    }
+
+    const applyRoundAnimation = (round) => {
+        generatedStringZone.classList.remove('anim-wiggle', 'anim-glitch-font');
+        stopCorruptionEffect();
+
+        if (round === 1) {
+            generatedStringZone.classList.add('anim-wiggle');
+        } else if (round === 2) {
+            generatedStringZone.classList.add('anim-glitch-font');
+        } else if (round === 3) {
+            startCorruptionEffect();
+        }
     }
 
     document.addEventListener("keydown", (e) => {
@@ -132,21 +185,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (checkCorrectInput(input, code[inputIndex], currentMap)) {
                 correctSound.currentTime = 0;
-                addTime(3);
                 correctSound.play();
-                document.getElementById("char" + inputIndex).style.color = "#00ff00";
+                document.getElementById("char" + inputIndex).classList.remove("current-letter");
+                document.getElementById("char" + inputIndex).classList.add("correct-letter");
                 inputIndex++;
 
                 if (inputIndex >= code.length) {
-                    generateString();
-                    rounds++;
-                    updateRounds();
-                    addTime(30); // Add 30 seconds for the next round
                     if (rounds >= maxRounds) {
                         stop("win");
+                    } else {
+                        rounds++;
+                        generateString();
+                        updateRounds();
+                        addTime(10); // Add 10 seconds for the next round
                     }
                 } else {
-                    document.getElementById("char" + inputIndex).style.color = "#ff0";
+                    document.getElementById("char" + inputIndex).classList.add("current-letter");
                 }
             } else {
                 reduceTime(2); // Reduce time by 2 seconds
