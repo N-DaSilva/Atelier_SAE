@@ -111,13 +111,35 @@ document.addEventListener("DOMContentLoaded", () => {
     const incorrectCharacter = (index) => {
         const charElement = document.getElementById("char" + index);
 
-        charElement.style.color = "#f00";
+        // Timer
+        reduceTime(2); // Reduce time by 2 seconds
+        timerBarElement.style.backgroundColor = "#f00";
 
+        // Sound
+        errorSound.currentTime = 0;
+        errorSound.play();
+
+        // Color
+        charElement.classList.add("incorrect-letter");
+
+        // Animation
         charElement.classList.remove("animate");
         charElement.classList.add("animate");
         charElement.addEventListener("animationend", () => {
             charElement.classList.remove("animate");
         }, { once: true });
+    }
+
+    const correctCharacter = (index) => {
+        const charElement = document.getElementById("char" + index);
+
+        // Sound
+        correctSound.currentTime = 0;
+        correctSound.play();
+
+        // Color
+        document.getElementById("char" + inputIndex).classList.remove("current-letter", "incorrect-letter");
+        document.getElementById("char" + inputIndex).classList.add("correct-letter");
     }
 
     const checkCorrectInput = (input, correctKey, map) => {
@@ -184,10 +206,8 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log(checkCorrectInput(input, code[inputIndex], currentMap));
 
             if (checkCorrectInput(input, code[inputIndex], currentMap)) {
-                correctSound.currentTime = 0;
-                correctSound.play();
-                document.getElementById("char" + inputIndex).classList.remove("current-letter");
-                document.getElementById("char" + inputIndex).classList.add("correct-letter");
+                correctCharacter(inputIndex);
+                
                 inputIndex++;
 
                 if (inputIndex >= code.length) {
@@ -203,10 +223,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     document.getElementById("char" + inputIndex).classList.add("current-letter");
                 }
             } else {
-                reduceTime(2); // Reduce time by 2 seconds
-                errorSound.currentTime = 0;
-                errorSound.play();
-                timerBarElement.style.backgroundColor = "#f00";
                 incorrectCharacter(inputIndex);
             }
         }

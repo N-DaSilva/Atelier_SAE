@@ -168,3 +168,6 @@ canvas {
     color: #0f0;
 }
 
+.incorrect-letter {
+    color: #f00;
+}
