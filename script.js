@@ -21,6 +21,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let maxRounds = 3;
     let corruptionInterval;
 
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    let matrixInterval;
 
     const timerElement = document.getElementById("timer");
     const timerBarElement = document.getElementById("timer-bar");
@@ -83,15 +86,40 @@ document.addEventListener("DOMContentLoaded", () => {
         playing = false;
         endTimer();
         stopCorruptionEffect();
-        resetBttn.style.display = "block";
         generatedStringZone.innerHTML = "";
         inputZone.innerHTML = "";
-
+        
         if (action == "lose") {
+            resetBttn.style.display = "block";
             timerElement.textContent = "0";
         } else if (action == "win") {
-            timerElement.textContent = ":)"
+            win();
         }
+    }
+
+    const win = () => {
+        const winningElement = document.getElementById("winning-ending");
+        const videoElement = document.getElementById("reveal-video");
+
+        clearInterval(matrixInterval);
+
+        winningElement.classList.remove("hidden");
+
+        // Ajouter une Pop-up (comme celle de l'intro) "Video unlocked" pour lancer la vidéo ?
+        
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                winningElement.classList.add("visible");
+                
+                winningElement.addEventListener("transitionend", () => {
+                    videoElement.muted = true;
+                    videoElement.play().then(() => {
+                        videoElement.muted = false;
+                    });
+                    videoElement.classList.add("visible");
+                }, { once: true });
+            });
+        });
     }
 
     const reset = () => {
@@ -271,58 +299,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const endTimer = () => {
         clearInterval(timer);
+        tickingSound.pause();
     }
 
 
-    //background
-    // geting canvas by Boujjou Achraf
-    var c = document.getElementById("c");
-    var ctx = c.getContext("2d");
+    // Background
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
 
-    //making the canvas full screen
-    c.height = window.innerHeight;
-    c.width = window.innerWidth;
-
-    //chinese characters - taken from the unicode charset
-    var matrix = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
-    //converting the string into an array of single characters
+    let matrix = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
     matrix = matrix.split("");
 
-    var font_size = 10;
-    var columns = c.width / font_size; //number of columns for the rain
-    //an array of drops - one per column
-    var drops = [];
-    //x below is the x coordinate
-    //1 = y co-ordinate of the drop(same for every drop initially)
-    for (var x = 0; x < columns; x++)
+    let font_size = 10;
+    let columns = canvas.width / font_size;
+    let drops = [];
+
+    for (let x = 0; x < columns; x++)
         drops[x] = 1;
 
     //drawing the characters
     function draw() {
-        //Black BG for the canvas
-        //translucent BG to show trail
         ctx.fillStyle = "rgba(0, 0, 0, 0.04)";
-        ctx.fillRect(0, 0, c.width, c.height);
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        ctx.fillStyle = "#006300";//green text
+        ctx.fillStyle = "#006300";
         ctx.font = font_size + "px arial";
-        //looping over drops
-        for (var i = 0; i < drops.length; i++) {
-            //a random chinese character to print
-            var text = matrix[Math.floor(Math.random() * matrix.length)];
-            //x = i*font_size, y = value of drops[i]*font_size
+        for (let i = 0; i < drops.length; i++) {
+            let text = matrix[Math.floor(Math.random() * matrix.length)];
             ctx.fillText(text, i * font_size, drops[i] * font_size);
 
-            //sending the drop back to the top randomly after it has crossed the screen
-            //adding a randomness to the reset to make the drops scattered on the Y axis
-            if (drops[i] * font_size > c.height && Math.random() > 0.975)
+            if (drops[i] * font_size > canvas.height && Math.random() > 0.975)
                 drops[i] = 0;
-
-            //incrementing Y coordinate
             drops[i]++;
         }
     }
 
-    setInterval(draw, 35);
+    matrixInterval = setInterval(draw, 35);
 
 })

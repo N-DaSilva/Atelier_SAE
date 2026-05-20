@@ -7,13 +7,20 @@
     <title>Décryptage</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">F
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <!-- <h1>Atelier SAE</h1> -->
-    <canvas id="c"></canvas>
+    <canvas id="canvas"></canvas>
+
+    <div id="winning-ending" class="hidden fade">
+        <video id="reveal-video" muted preload="auto" class="fade">
+            <source src="medias/final_reveal.mp4" type="video/mp4">
+            Votre navigateur ne supporte pas le format vidéo.
+        </video>
+    </div>
 
     <div class="timer-bar">
         <div class="timer-bar-bg"></div>
@@ -32,7 +39,6 @@
     </div>
 
     <p id="input-zone" class="crypted hidden"></p>
-    <!-- <button id="generate-bttn">Nouveau code</button> -->
 
     <script src="script.js"></script>
 </body>
