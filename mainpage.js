@@ -145,6 +145,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const popup = document.getElementById("popup")
         popup.classList.remove("hidden");
         popup.style.display = "block";
+        setTimeout(() => {
+            document.getElementById("popup-content").innerHTML = "<a class='start-bttn' href='game.html'>Start</a>";
+        }, 5000);
     }
 
     revealNextLines();
