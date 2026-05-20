@@ -1,5 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const inputValues = 'L12JM680*)'.split('');
+    const keyMaps = [
+        { "1": "A", "2": "R", "3": "C", "4": "H", "5": "E", "6": "U", "7": "S", "8": "D", "9": "B", "0": "N" },
+        { "1": "P", "2": "A", "3": "U", "4": "L", "5": "I", "6": "N", "7": "E", "8": ".", "9": "_", "0": "7" },
+        { "1": "I", "2": "N", "3": "E", "4": "S", "5": "K", "6": "O", "7": "_", "8": "0", "9": "1", "0": "3" }
+    ];
+    let availableMaps = structuredClone(keyMaps);
+    let currentMap;
+
+    const inputValues = '1234567890'.split('');
     const inputZone = document.getElementById("input-zone");
     const generatedStringZone = document.getElementById("generated-string");
     const resetBttn = document.getElementById("reset-bttn");
@@ -10,12 +18,13 @@ document.addEventListener("DOMContentLoaded", () => {
     let code = "";
     let inputIndex = 0;
     let rounds = 1;
-    let maxRounds = 5;
+    let maxRounds = 3;
+    let corruptionInterval;
 
 
     const timerElement = document.getElementById("timer");
     const timerBarElement = document.getElementById("timer-bar");
-    
+
     let counter = 6 * 1000; // 5 seconds
     const maxTime = maxRounds * 30 * 1000; // 30 secondes par tour
     let remainingTime = maxTime;
@@ -34,25 +43,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const generateString = () => {
+        const chosenMapIndex = getRandomInt(availableMaps.length);
+        currentMap = availableMaps.splice(chosenMapIndex, 1)[0];
+        console.log(keyMaps);
+        console.log(availableMaps);
+
+        let codeValues = '';
+
+        for (const [key, value] of Object.entries(currentMap)) {
+            codeValues += value;
+        }
+
         let generatedString = "";
         let generatedHTML = "";
-        let randomIndex = getRandomInt(inputValues.length);
+        let randomIndex = getRandomInt(codeValues.length);
 
-        for (let i = 0; i < inputValues.length; i++) {
+        for (let i = 0; i < codeValues.length; i++) {
             if (generatedString.length > 0) {
-                while (inputValues[randomIndex] == generatedString[i-1]) {
-                    randomIndex = getRandomInt(inputValues.length);
+                while (generatedString.indexOf(codeValues[randomIndex])>-1) {
+                    randomIndex = getRandomInt(codeValues.length);
                 }
             }
-            generatedString += inputValues[randomIndex];
-            generatedHTML += `<span id="char${i}">${generatedString[i]}</span>`
+            generatedString += codeValues[randomIndex];
+            const randomDelayMs = getRandomInt(900);
+            generatedHTML += `<span id="char${i}" data-original="${generatedString[i]}" style="--char-delay:${randomDelayMs}ms">${generatedString[i]}</span>`
         }
 
         generatedStringZone.innerHTML = generatedHTML;
         code = generatedString;
         inputIndex = 0;
         inputZone.innerHTML = "";
-        document.getElementById("char" + inputIndex).style.color = "yellow";
+        applyRoundAnimation(rounds);
+        document.getElementById("char" + inputIndex).classList.add("current-letter");
 
         console.log(code);
     }
@@ -60,6 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const stop = (action) => {
         playing = false;
         endTimer();
+        stopCorruptionEffect();
         resetBttn.style.display = "block";
         generatedStringZone.innerHTML = "";
         inputZone.innerHTML = "";
@@ -76,14 +99,103 @@ document.addEventListener("DOMContentLoaded", () => {
         resetBttn.style.display = "none";
         roundsElement.textContent = `Round: ${rounds} / ${maxRounds}`;
         remainingTime = maxTime;
+        availableMaps = structuredClone(keyMaps);
         playing = true;
 
         generateString();
         startTimer();
     }
 
-
     resetBttn.addEventListener('click', reset);
+
+    const incorrectCharacter = (index) => {
+        const charElement = document.getElementById("char" + index);
+
+        // Timer
+        reduceTime(2); // Reduce time by 2 seconds
+        timerBarElement.style.backgroundColor = "#f00";
+
+        // Sound
+        errorSound.currentTime = 0;
+        errorSound.play();
+
+        // Color
+        charElement.classList.add("incorrect-letter");
+
+        // Animation
+        charElement.classList.remove("animate");
+        charElement.classList.add("animate");
+        charElement.addEventListener("animationend", () => {
+            charElement.classList.remove("animate");
+        }, { once: true });
+    }
+
+    const correctCharacter = (index) => {
+        const charElement = document.getElementById("char" + index);
+
+        // Sound
+        correctSound.currentTime = 0;
+        correctSound.play();
+
+        // Color
+        document.getElementById("char" + inputIndex).classList.remove("current-letter", "incorrect-letter");
+        document.getElementById("char" + inputIndex).classList.add("correct-letter");
+    }
+
+    const checkCorrectInput = (input, correctKey, map) => {
+        let isCorrectInput = false
+        Object.keys(map).forEach(key => {
+            if ((key == input) && (map[key] == correctKey)) {
+                isCorrectInput = true;
+            }
+        });
+        return isCorrectInput;
+    }
+
+    const stopCorruptionEffect = () => {
+        if (corruptionInterval) {
+            clearInterval(corruptionInterval);
+            corruptionInterval = null;
+        }
+    }
+
+    const startCorruptionEffect = () => {
+        stopCorruptionEffect();
+        const symbols = ['@', '#'];
+
+        corruptionInterval = setInterval(() => {
+            const spans = generatedStringZone.querySelectorAll('span');
+            spans.forEach((span, index) => {
+                const originalChar = code[index] || span.dataset.original || '';
+                if (span.classList.contains('correct-letter') || span.classList.contains('current-letter')) {
+                    span.textContent = originalChar;
+                    return;
+                }
+
+                const roll = Math.random();
+                if (roll < 0.16) {
+                    span.textContent = '';
+                } else if (roll < 0.42) {
+                    span.textContent = symbols[getRandomInt(symbols.length)];
+                } else {
+                    span.textContent = originalChar;
+                }
+            });
+        }, 120);
+    }
+
+    const applyRoundAnimation = (round) => {
+        generatedStringZone.classList.remove('anim-wiggle', 'anim-glitch-font');
+        stopCorruptionEffect();
+
+        if (round === 1) {
+            generatedStringZone.classList.add('anim-wiggle');
+        } else if (round === 2) {
+            generatedStringZone.classList.add('anim-glitch-font');
+        } else if (round === 3) {
+            startCorruptionEffect();
+        }
+    }
 
     document.addEventListener("keydown", (e) => {
         if (!playing) return;
@@ -91,30 +203,27 @@ document.addEventListener("DOMContentLoaded", () => {
         const input = e.key.toUpperCase();
         if (inputValues.includes(input)) {
             inputZone.innerHTML += input;
+            console.log(checkCorrectInput(input, code[inputIndex], currentMap));
 
-            if (input == code[inputIndex]) {
-                correctSound.currentTime = 0;
-                correctSound.play();
-                document.getElementById("char" + inputIndex).style.color = "#00ff00";
+            if (checkCorrectInput(input, code[inputIndex], currentMap)) {
+                correctCharacter(inputIndex);
+                
                 inputIndex++;
 
                 if (inputIndex >= code.length) {
-                    generateString();
-                    rounds++;
-                    updateRounds();
-                    addTime(5); // Add 5 seconds for the next round
                     if (rounds >= maxRounds) {
                         stop("win");
+                    } else {
+                        rounds++;
+                        generateString();
+                        updateRounds();
+                        addTime(10); // Add 10 seconds for the next round
                     }
                 } else {
-                    document.getElementById("char" + inputIndex).style.color = "#ff0";
+                    document.getElementById("char" + inputIndex).classList.add("current-letter");
                 }
             } else {
-                reduceTime(2); // Reduce time by 2 seconds
-                errorSound.currentTime = 0;
-                errorSound.play();
-                timerBarElement.style.backgroundColor = "#f00";
-                document.getElementById("char" + inputIndex).style.color = "#f00";
+                incorrectCharacter(inputIndex);
             }
         }
     })
