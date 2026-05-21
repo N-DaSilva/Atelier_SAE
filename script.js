@@ -231,9 +231,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const input = e.key.toUpperCase();
         if (inputValues.includes(input)) {
             inputZone.innerHTML += input;
-            console.log(checkCorrectInput(input, code[inputIndex], currentMap));
-            stop("win");
-            return;
 
             if (checkCorrectInput(input, code[inputIndex], currentMap)) {
                 correctCharacter(inputIndex);
