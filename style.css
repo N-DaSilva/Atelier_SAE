@@ -10,6 +10,13 @@ p {
     margin: 0;
 }
 
+h1 {
+    font-family: 'Orbitron';
+    color: white;
+    font-size: 5rem;
+    text-align: center;
+}
+
 /*Main Page CSS*/
 
 .terminal {
@@ -52,6 +59,7 @@ p {
     align-items: center;
     justify-content: center;
     text-align: center;
+    flex-wrap: wrap;
 }
 
 .popup-header {
@@ -91,6 +99,24 @@ p {
     to {
         clip-path: inset(0 -34% 0 0)
     }
+}
+
+/* Config CSS */
+
+.container {
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    width: 50%;
+    height: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 45px;
+}
+
+.number {
+    font-size: 10rem;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 

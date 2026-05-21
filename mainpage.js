@@ -142,11 +142,10 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const displayPopup = () => {
-        const popup = document.getElementById("popup")
-        popup.classList.remove("hidden");
-        popup.style.display = "block";
+        const popup = document.getElementById("popup");
+        popup.show();
         setTimeout(() => {
-            document.getElementById("popup-content").innerHTML = "<a class='start-bttn' href='game.html'>Start</a>";
+            document.getElementById("popup-content").innerHTML = "<a class='start-bttn' href='config.html'>Start</a>";
         }, 5000);
     }
 
