@@ -22,5 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const displayStart = () => {
         const popup = document.getElementById("popup");
         popup.show();
+        popup.style.display = 'block';
     }
 })

@@ -144,6 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const displayPopup = () => {
         const popup = document.getElementById("popup");
         popup.show();
+        popup.style.display = 'block';
         setTimeout(() => {
             document.getElementById("popup-content").innerHTML = "<a class='start-bttn' href='config.html'>Start</a>";
         }, 5000);
