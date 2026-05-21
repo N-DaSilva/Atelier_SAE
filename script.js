@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const timerBarElement = document.getElementById("timer-bar");
 
     let counter = 6 * 1000; // 5 seconds
-    const maxTime = maxRounds * 30 * 1000; // 30 secondes par tour
+    const maxTime = maxRounds * 45 * 1000; // 60 secondes par tour
     let remainingTime = maxTime;
 
     const errorSound = new Audio('medias/error.mp3');
@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const correctCharacter = (index) => {
-        const charElement = document.getElementById("char" + index);
+        addTime(5);
 
         // Sound
         correctSound.currentTime = 0;
@@ -244,7 +244,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         rounds++;
                         generateString();
                         updateRounds();
-                        addTime(10); // Add 10 seconds for the next round
+                        addTime(30); // Add 10 seconds for the next round
                     }
                 } else {
                     document.getElementById("char" + inputIndex).classList.add("current-letter");
