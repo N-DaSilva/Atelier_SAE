@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const timerBarElement = document.getElementById("timer-bar");
 
     let counter = 6 * 1000; // 5 seconds
-    const maxTime = maxRounds * 45 * 1000; // 60 secondes par tour
+    const maxTime = maxRounds * 30 * 1000; // 60 secondes par tour
     let remainingTime = maxTime;
 
     const errorSound = new Audio('medias/error.mp3');
@@ -159,7 +159,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const correctCharacter = (index) => {
-        addTime(5);
 
         // Sound
         correctSound.currentTime = 0;
