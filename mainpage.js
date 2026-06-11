@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    console.log(localStorage.getItem("difficulty"))
 
     const terminalElement = document.getElementById('terminal');
     let terminalLineElement = document.querySelector(".terminal-line.current");

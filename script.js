@@ -1,17 +1,22 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const keyMaps = [
+    const keyMapsHard = [
         { "1": "A", "2": "R", "3": "C", "4": "H", "5": "E", "6": "U", "7": "S", "8": "D", "9": "B", "0": "N" },
         { "1": "P", "2": "A", "3": "U", "4": "L", "5": "I", "6": "N", "7": "E", "8": ".", "9": "_", "0": "7" },
         { "1": "I", "2": "N", "3": "E", "4": "S", "5": "K", "6": "O", "7": "_", "8": "0", "9": "1", "0": "3" }
     ];
-    let availableMaps = structuredClone(keyMaps);
+    let availableMaps = structuredClone(keyMapsHard);
     let currentMap;
+
+    const keyMapEasy = { "1": "E", "2": "L", "3": "I", "4": "S", "5": "D", "6": "U", "7": "N", "8": "A", "9": "P", "0": "J" };
 
     const inputValues = '1234567890'.split('');
     const inputZone = document.getElementById("input-zone");
     const generatedStringZone = document.getElementById("generated-string");
     const resetBttn = document.getElementById("reset-bttn");
     const roundsElement = document.getElementById("rounds");
+
+    const difficulty = localStorage.getItem("difficulty");
+    console.log(difficulty);
 
     let playing = false;
 
@@ -46,10 +51,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const generateString = () => {
-        const chosenMapIndex = getRandomInt(availableMaps.length);
-        currentMap = availableMaps.splice(chosenMapIndex, 1)[0];
-        console.log(keyMaps);
-        console.log(availableMaps);
+        if (difficulty == "hard") {
+            const chosenMapIndex = getRandomInt(availableMaps.length);
+            currentMap = availableMaps.splice(chosenMapIndex, 1)[0];
+        } else {
+            currentMap = keyMapEasy;
+        }
 
         let codeValues = '';
 
@@ -63,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         for (let i = 0; i < codeValues.length; i++) {
             if (generatedString.length > 0) {
-                while (generatedString.indexOf(codeValues[randomIndex])>-1) {
+                while (generatedString.indexOf(codeValues[randomIndex]) > -1) {
                     randomIndex = getRandomInt(codeValues.length);
                 }
             }
@@ -78,8 +85,6 @@ document.addEventListener("DOMContentLoaded", () => {
         inputZone.innerHTML = "";
         applyRoundAnimation(rounds);
         document.getElementById("char" + inputIndex).classList.add("current-letter");
-
-        console.log(code);
     }
 
     const stop = (action) => {
@@ -88,7 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
         stopCorruptionEffect();
         generatedStringZone.innerHTML = "";
         inputZone.innerHTML = "";
-        
+
         if (action == "lose") {
             resetBttn.style.display = "block";
             timerElement.textContent = "0";
@@ -106,11 +111,11 @@ document.addEventListener("DOMContentLoaded", () => {
         winningElement.classList.remove("hidden");
 
         // Ajouter une Pop-up (comme celle de l'intro) "Video unlocked" pour lancer la vidéo ?
-        
+
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 winningElement.classList.add("visible");
-                
+
                 winningElement.addEventListener("transitionend", () => {
                     videoElement.muted = true;
                     videoElement.play().then(() => {
@@ -127,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
         resetBttn.style.display = "none";
         roundsElement.textContent = `Round: ${rounds} / ${maxRounds}`;
         remainingTime = maxTime;
-        availableMaps = structuredClone(keyMaps);
+        availableMaps = structuredClone(keyMapsHard);
         playing = true;
 
         generateString();
@@ -233,7 +238,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (checkCorrectInput(input, code[inputIndex], currentMap)) {
                 correctCharacter(inputIndex);
-                
+
                 inputIndex++;
 
                 if (inputIndex >= code.length) {

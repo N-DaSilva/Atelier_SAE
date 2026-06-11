@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+    console.log(localStorage.getItem("difficulty"))
+
     const numberElements = Array.from(document.querySelectorAll(".number"));
     const inputs = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
     const pressedBtns = [];

@@ -190,6 +190,12 @@
         }
       },
       {
+        "parameters": [
+          {
+            "value": true,
+            "controlAddress": "/logIncoming"
+          }
+        ],
         "niceName": "Gamepad",
         "type": "Gamepad",
         "scripts": {
@@ -289,7 +295,7 @@
                   {
                     "parameters": [
                       {
-                        "value": "/modules/gamepad/values/buttons/button12",
+                        "value": "/modules/gamepad/values/buttons/button1",
                         "controlAddress": "/inputValue"
                       }
                     ],
@@ -361,7 +367,7 @@
                   {
                     "parameters": [
                       {
-                        "value": "/modules/gamepad/values/buttons/button10",
+                        "value": "/modules/gamepad/values/buttons/button2",
                         "controlAddress": "/inputValue"
                       }
                     ],
@@ -433,7 +439,7 @@
                   {
                     "parameters": [
                       {
-                        "value": "/modules/gamepad/values/buttons/button8",
+                        "value": "/modules/gamepad/values/buttons/button3",
                         "controlAddress": "/inputValue"
                       }
                     ],
@@ -505,7 +511,7 @@
                   {
                     "parameters": [
                       {
-                        "value": "/modules/gamepad/values/buttons/button6",
+                        "value": "/modules/gamepad/values/buttons/button4",
                         "controlAddress": "/inputValue"
                       }
                     ],
@@ -577,7 +583,7 @@
                   {
                     "parameters": [
                       {
-                        "value": "/modules/gamepad/values/buttons/button4",
+                        "value": "/modules/gamepad/values/buttons/button5",
                         "controlAddress": "/inputValue"
                       }
                     ],
@@ -649,7 +655,7 @@
                   {
                     "parameters": [
                       {
-                        "value": "/modules/gamepad/values/buttons/button1",
+                        "value": "/modules/gamepad/values/buttons/button6",
                         "controlAddress": "/inputValue"
                       }
                     ],
@@ -721,7 +727,7 @@
                   {
                     "parameters": [
                       {
-                        "value": "/modules/gamepad/values/buttons/button3",
+                        "value": "/modules/gamepad/values/buttons/button7",
                         "controlAddress": "/inputValue"
                       }
                     ],
@@ -793,7 +799,7 @@
                   {
                     "parameters": [
                       {
-                        "value": "/modules/gamepad/values/buttons/button5",
+                        "value": "/modules/gamepad/values/buttons/button8",
                         "controlAddress": "/inputValue"
                       }
                     ],
@@ -865,7 +871,7 @@
                   {
                     "parameters": [
                       {
-                        "value": "/modules/gamepad/values/buttons/button7",
+                        "value": "/modules/gamepad/values/buttons/button9",
                         "controlAddress": "/inputValue"
                       }
                     ],
@@ -937,7 +943,7 @@
                   {
                     "parameters": [
                       {
-                        "value": "/modules/gamepad/values/buttons/button11",
+                        "value": "/modules/gamepad/values/buttons/button10",
                         "controlAddress": "/inputValue"
                       }
                     ],

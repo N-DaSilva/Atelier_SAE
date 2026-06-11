@@ -17,6 +17,23 @@ h1 {
     text-align: center;
 }
 
+/*Index CSS*/
+
+form {
+    color: white;
+    width: 500px;
+    margin: auto;
+}
+
+fieldset {
+    margin-bottom: 50px;
+}
+
+button[type="submit"] {
+    margin-top: 20px;
+}
+
+
 /*Main Page CSS*/
 
 .terminal {

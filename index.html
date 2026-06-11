@@ -3,24 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="medias/favicon.svg" type="image/svg">
-    <link rel="stylesheet" href="style.css">
     <title>Atelier SAÉ</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="terminal" class="terminal">
-    </div>
+    <h1>Le mystère d'Alice - Jeu de décryptage</h1>
+    <form action="" onsubmit="return onSubmit()">
+        <fieldset>
+            <legend>Difficulté</legend>
+            <div class="container">
+                <div>
+                    <label for="difficulty-easy">Facile</label>
+                    <input type="radio" name="difficulty" id="difficulty-easy" value="easy">
+                </div>
+                <div>
+                    <label for="difficulty-hard">Difficile</label>
+                    <input type="radio" name="difficulty" id="difficulty-hard" value="hard">
+                </div>
+            </div>
+        </fieldset>
 
+        <!-- <div>
+            <label for="players">Nombre de joueurs</label>
+            <input type="number" name="players" id="players" value="10" max="10" min="5">
+        </div> -->
 
-    <dialog id="popup" class="popup hidden">
-        <div class="popup-header">
-            <p>Decoder</p>
-            <p>X</p>
-        </div>
-        <div id="popup-content" class="popup-content">
-            <div class="loader"></div>
-        </div>
-    </dialog>
+        <button type="submit">Commencer</button>
+    </form>
 
-    <script src="mainpage.js"></script>
+    <script>
+        function onSubmit() {
+            const difficulty = Array.from(document.querySelectorAll("input[type='radio']")).filter(diff => diff.checked)[0].value;
+            // const players = document.getElementById("players").value;
+            
+            // localStorage.setItem("players", players);
+            localStorage.setItem("difficulty", difficulty);
+
+            window.location.href = "terminal.html";
+            return false;
+        }
+    </script>
 </body>
+</html>
