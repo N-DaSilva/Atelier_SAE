@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log(localStorage.getItem("difficulty"))
+    const difficulty = new URLSearchParams(document.location.search).get("difficulty");
 
     const numberElements = Array.from(document.querySelectorAll(".number"));
     const inputs = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
@@ -25,5 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const popup = document.getElementById("popup");
         popup.show();
         popup.style.display = 'block';
+        document.getElementById("start-bttn").setAttribute("href", "game.html?difficulty="+ difficulty);
     }
 })

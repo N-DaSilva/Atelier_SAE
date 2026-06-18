@@ -15,8 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const resetBttn = document.getElementById("reset-bttn");
     const roundsElement = document.getElementById("rounds");
 
-    const difficulty = localStorage.getItem("difficulty");
-    console.log(difficulty);
+    const difficulty = new URLSearchParams(document.location.search).get("difficulty");
 
     let playing = false;
 

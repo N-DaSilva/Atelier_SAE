@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log(localStorage.getItem("difficulty"))
+    const difficulty = new URLSearchParams(document.location.search).get("difficulty");
 
     const terminalElement = document.getElementById('terminal');
     let terminalLineElement = document.querySelector(".terminal-line.current");
@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
         popup.show();
         popup.style.display = 'block';
         setTimeout(() => {
-            document.getElementById("popup-content").innerHTML = "<a class='start-bttn' href='config.html'>Start</a>";
+            document.getElementById("popup-content").innerHTML = "<a class='start-bttn' href='config.html?difficulty="+difficulty+"'>Start</a>";
         }, 5000);
     }
 

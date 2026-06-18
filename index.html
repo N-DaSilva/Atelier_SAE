@@ -59,12 +59,8 @@
 
         function onSubmit() {
             const difficulty = Array.from(document.querySelectorAll("input[type='radio']")).filter(diff => diff.checked)[0].value;
-            // const players = document.getElementById("players").value;
-            
-            // localStorage.setItem("players", players);
-            localStorage.setItem("difficulty", difficulty);
 
-            window.location.href = "terminal.html";
+            window.location.href = "terminal.html?difficulty="+difficulty;
             return false;
         }
     </script>
