@@ -1,68 +1,349 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atelier SAÉ</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="shortcut icon" href="medias/favicon.svg" type="image/svg">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Décryptage des pseudos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Podkova:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --blue:    #111D37;
+    --blue-2:  #182a4d;
+    --blue-3:  #21365e;
+    --yellow:  #FFC636;
+    --brown:   #943520;
+    --sand:    #D8C09E;
+    --cream:   #F5EFE2;
+    --muted:   #B9C0CE;
+
+    --serif: "Podkova", Georgia, serif;
+    --sans:  "Montserrat", system-ui, sans-serif;
+
+    --step--1: clamp(0.78rem, 0.72rem + 0.3vw, 0.95rem);
+    --step-0:  clamp(0.95rem, 0.88rem + 0.4vw, 1.1rem);
+    --step-1:  clamp(1.2rem, 1.05rem + 0.7vw, 1.6rem);
+    --step-2:  clamp(1.6rem, 1.3rem + 1.4vw, 2.6rem);
+    --step-3:  clamp(2rem, 1.4rem + 3.4vw, 4.2rem);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    color: var(--cream);
+    background:
+      radial-gradient(1100px 600px at 80% -15%, rgba(255,198,54,0.08), transparent 60%),
+      radial-gradient(900px 520px at -10% 115%, rgba(148,53,32,0.14), transparent 55%),
+      var(--blue);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1.25rem, 4vw, 3rem);
+  }
+
+  .board {
+    width: 100%;
+    max-width: 1120px;
+    display: grid;
+    grid-template-columns: minmax(72px, 0.45fr) repeat(3, 1fr);
+    gap: clamp(8px, 1.4vw, 16px);
+  }
+
+  .head-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: var(--step-1);
+    color: var(--blue);
+    background: var(--yellow);
+    border-radius: 12px;
+    padding: 0.7em 0.6em;
+    text-align: center;
+    box-shadow: 0 5px 0 rgba(148,53,32,0.25);
+  }
+
+  .corner {
+    background: transparent;
+    box-shadow: none;
+    color: var(--sand);
+    font-family: var(--serif);
+    font-size: var(--step-2);
+    opacity: 0.35;
+  }
+
+  .row-head {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: var(--step-0);
+    letter-spacing: 0.03em;
+    color: var(--sand);
+    background: rgba(216,192,158,0.06);
+    border: 1px solid rgba(216,192,158,0.22);
+    border-radius: 12px;
+    padding: 0.6em 0.7em;
+    text-align: center;
+  }
+
+  /* ---------- Cases cliquables ---------- */
+  .cell {
+    position: relative;
+    appearance: none;
+    border: 1px solid rgba(216,192,158,0.20);
+    background: linear-gradient(180deg, var(--blue-3), var(--blue-2));
+    color: var(--cream);
+    border-radius: 14px;
+    padding: clamp(1rem, 2.4vw, 1.6rem) 0.9rem;
+    min-height: clamp(78px, 11vw, 110px);
+    cursor: pointer;
+    font-family: var(--serif);
+    font-size: var(--step-1);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.25s ease, border-color 0.25s ease;
+    overflow: hidden;
+    word-break: break-word;
+  }
+
+  .cell::before {
+    content: "";
+    position: absolute;
+    inset: 7px;
+    border: 1px solid rgba(216,192,158,0);
+    border-radius: 9px;
+    pointer-events: none;
+    transition: border-color 0.25s ease;
+  }
+
+  .cell .dot {
+    color: var(--sand);
+    opacity: 0.30;
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: var(--step-0);
+  }
+
+  .cell .pseudo {
+    color: var(--yellow);
+    white-space: nowrap;
+    font-size: var(--step-0);
+  }
+  .cell .pseudo .cursor {
+    color: var(--sand);
+    animation: blink 0.9s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .cell:hover:not(.revealed) {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.28);
+    border-color: var(--yellow);
+  }
+  .cell:hover::before { border-color: rgba(255,198,54,0.40); }
+
+  .cell:focus-visible {
+    outline: 3px solid var(--yellow);
+    outline-offset: 3px;
+  }
+
+  .cell.decoding {
+    border-color: var(--yellow);
+    box-shadow: 0 0 0 1px var(--yellow) inset, 0 0 26px rgba(255,198,54,0.16);
+  }
+
+  .cell.revealed {
+    background: linear-gradient(180deg, rgba(255,198,54,0.10), rgba(0,0,0,0.12)), var(--blue-2);
+    border-color: rgba(255,198,54,0.50);
+  }
+  .cell.revealed::before { border-color: rgba(255,198,54,0.25); }
+
+  /* ---------- Overlay « découverte » ---------- */
+  .discovery {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(1rem, 3vw, 2rem);
+    text-align: center;
+    padding: 1.5rem;
+    background: rgba(9, 16, 32, 0.88); /* fond sombre pour le contraste */
+    pointer-events: none;              /* clics traversent, sauf sur le lien */
+    z-index: 50;
+  }
+  .discovery[hidden] { display: none; }
+
+  /* léger flash plein écran qui pulse */
+  .discovery::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(60% 60% at 50% 50%, rgba(255,198,54,0.16), rgba(17,29,55,0.0) 70%);
+    animation: flash 1s ease-in-out infinite;
+  }
+  @keyframes flash { 0%,100% { opacity: 0.15; } 50% { opacity: 0.9; } }
+
+  .discovery-title {
+    position: relative;
+    font-family: var(--serif);
+    font-weight: 800;
+    font-size: var(--step-3);
+    line-height: 1.05;
+    color: var(--yellow);
+    text-shadow: 0 0 24px rgba(255,198,54,0.35), 0 2px 0 rgba(17,29,55,0.6);
+    animation: pulse 1s ease-in-out infinite;
+    max-width: 18ch;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1;   transform: scale(1); }
+    50%     { opacity: 0.4; transform: scale(1.04); }
+  }
+
+  .discovery-link {
+    position: relative;
+    pointer-events: auto;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: var(--step-0);
+    letter-spacing: 0.04em;
+    color: var(--blue);
+    background: var(--yellow);
+    border-radius: 999px;
+    padding: 0.7em 1.6em;
+    text-decoration: none;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.35);
+    transition: transform 0.15s ease, background 0.2s ease;
+  }
+  .discovery-link:hover { transform: translateY(-2px); background: #ffd45e; }
+  .discovery-link:focus-visible { outline: 3px solid var(--cream); outline-offset: 3px; }
+
+  @media (max-width: 540px) {
+    .head-cell, .row-head { font-size: var(--step--1); padding: 0.55em 0.3em; }
+  }
+</style>
 </head>
 <body>
-    <div class="vertical-center">
-        <div class="container-center">
-            <h1 class="smaller">Le mystère d'Alice - Jeu de décryptage</h1>
-            <form action="" onsubmit="return onSubmit()">
-                <fieldset>
-                    <legend>Difficulté</legend>
-                    <div class="container">
-                        <div>
-                            <input type="radio" name="difficulty" id="difficulty-easy" value="easy" checked>
-                            <label for="difficulty-easy" class="button checked">Facile</label>
-                        </div>
-                        <div>
-                            <input type="radio" name="difficulty" id="difficulty-hard" value="hard">
-                            <label for="difficulty-hard" class="button">Difficile</label>
-                        </div>
-                    </div>
-                </fieldset>
-                <!-- <div>
-                    <label for="players">Nombre de joueurs</label>
-                    <input type="number" name="players" id="players" value="10" max="10" min="5">
-                </div> -->
-                <button type="submit" class="button">Commencer</button>
-            </form>
-        </div>
-    </div>
+  <main class="board" id="board">
+    <div class="head-cell corner"></div>
+  </main>
 
-    <script>
-        const inputs = document.querySelectorAll("input[type='radio']");
-        const labels = document.querySelectorAll("label");
+  <div class="discovery" id="discovery" hidden>
+    <p class="discovery-title">Une découverte a été faite</p>
+    <a class="discovery-link" id="discovery-link" href="gameindex.html">Étape finale</a>
+  </div>
 
-        inputs.forEach((input) => {
-            const attachedLabel = Array.from(labels).filter(selectedLabel => selectedLabel.getAttribute("for") == input.id)[0];
-            input.addEventListener('change', (e) => {
-                toggleSelection(attachedLabel, input);
-            })
-        })
+<script>
+  const names = ["Inès", "Jade", "Pauline"];
+  const platforms = ["Instagram", "Snapchat", "TikTok"];
 
-        function toggleSelection(label, input) {
-            if (input.checked) {
-                Array.from(labels).filter(nonSelected => nonSelected != label)[0].classList.remove("checked");
-                label.classList.add("checked");
-            } else {
-                return;
-            }
-        }
+  const pseudos = {
+    Instagram: { "Inès": "@inazuma.92",      "Jade": "@jadou_01",          "Pauline": "@paupaudu77"   },
+    Snapchat:  { "Inès": "@inazuma.92",     "Jade": "@jadiix29",          "Pauline": "@paulixx77"    },
+    TikTok:    { "Inès": "@ineskooo_013",   "Jade": "@arracheusedebrune", "Pauline": "@lapaupau._77" },
+  };
 
-        function onSubmit() {
-            const difficulty = Array.from(document.querySelectorAll("input[type='radio']")).filter(diff => diff.checked)[0].value;
+  const SCRAMBLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@._#%&*";
 
-            window.location.href = "terminal.html?difficulty="+difficulty;
-            return false;
-        }
-    </script>
+  const board = document.getElementById("board");
+  const discovery = document.getElementById("discovery");
+  const EMPTY = `<span class="dot">?</span>`;
+  let totalCells = 0;
+
+  names.forEach(name => {
+    const h = document.createElement("div");
+    h.className = "head-cell";
+    h.textContent = name;
+    board.appendChild(h);
+  });
+
+  platforms.forEach(platform => {
+    const rh = document.createElement("div");
+    rh.className = "row-head";
+    rh.textContent = platform;
+    board.appendChild(rh);
+
+    names.forEach(name => {
+      const cell = document.createElement("button");
+      cell.className = "cell";
+      cell.type = "button";
+      cell.dataset.target = pseudos[platform][name];
+      cell.setAttribute("aria-label", `${platform} de ${name}`);
+      cell.innerHTML = EMPTY;
+      cell.addEventListener("click", () => onClick(cell));
+      board.appendChild(cell);
+      totalCells++;
+    });
+  });
+
+  function onClick(cell) {
+    if (cell.classList.contains("revealed") || cell.classList.contains("decoding")) {
+      resetCell(cell);
+    } else {
+      decrypt(cell);
+    }
+  }
+
+  function resetCell(cell) {
+    if (cell._timer) { clearInterval(cell._timer); cell._timer = null; }
+    cell.classList.remove("revealed", "decoding");
+    cell.innerHTML = EMPTY;
+    checkAll();
+  }
+
+  function rand(str) { return str[Math.floor(Math.random() * str.length)]; }
+
+  function decrypt(cell) {
+    if (cell._timer) clearInterval(cell._timer);
+
+    const target = cell.dataset.target;
+    cell.classList.add("decoding");
+    cell.classList.remove("revealed");
+
+    let revealed = 0;
+    let frame = 0;
+    const FRAMES_PER_LETTER = 3;
+
+    cell._timer = setInterval(() => {
+      frame++;
+      if (frame % FRAMES_PER_LETTER === 0 && revealed < target.length) revealed++;
+
+      let out = "";
+      for (let i = 0; i < target.length; i++) {
+        if (i < revealed)            out += target[i];
+        else if (target[i] === " ")  out += " ";
+        else                         out += rand(SCRAMBLE);
+      }
+
+      const done = revealed >= target.length;
+      const cursor = done ? "" : `<span class="cursor">▍</span>`;
+      cell.innerHTML = `<span class="pseudo">${out}${cursor}</span>`;
+
+      if (done) {
+        clearInterval(cell._timer);
+        cell._timer = null;
+        cell.classList.remove("decoding");
+        cell.classList.add("revealed");
+        checkAll();
+      }
+    }, 45);
+  }
+
+  function checkAll() {
+    const revealedCount = board.querySelectorAll(".cell.revealed").length;
+    discovery.hidden = revealedCount < totalCells;
+  }
+</script>
 </body>
 </html>

@@ -1,10 +1,16 @@
 # Atelier_SAE
 
+
+## CONTIENT :
+
+1) Le tableau de suivi d'enquête (index.html)
+2) Le jeu de décryptage
+
 ## BUT DU JEU :
 
 Une conversation a été trouvée qui pourrait bien vous aider à trouver la coupable derrière l'usurpation d'identité d'Alice ! Malheureusement celle-ci est chiffrée... Armés de vos fiches de décryptage, à vous de trouver sur quels boutons appuyer pour décoder les messages et avoir accès à la conversation !
 
-## MIS EN PLACE :
+## MISE EN PLACE :
 
 Le jeu de décryptage est lancé une fois le tableau de suivi d'enquête complété.
 

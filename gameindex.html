@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atelier SAÉ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="medias/favicon.svg" type="image/svg">
+</head>
+<body>
+    <div class="vertical-center">
+        <div class="container-center">
+            <h1 class="smaller">Le mystère d'Alice - Jeu de décryptage</h1>
+            <form action="" onsubmit="return onSubmit()">
+                <fieldset>
+                    <legend>Difficulté</legend>
+                    <div class="container">
+                        <div>
+                            <input type="radio" name="difficulty" id="difficulty-easy" value="easy" checked>
+                            <label for="difficulty-easy" class="button checked">Facile</label>
+                        </div>
+                        <div>
+                            <input type="radio" name="difficulty" id="difficulty-hard" value="hard">
+                            <label for="difficulty-hard" class="button">Difficile</label>
+                        </div>
+                    </div>
+                </fieldset>
+                <!-- <div>
+                    <label for="players">Nombre de joueurs</label>
+                    <input type="number" name="players" id="players" value="10" max="10" min="5">
+                </div> -->
+                <button type="submit" class="button">Commencer</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const inputs = document.querySelectorAll("input[type='radio']");
+        const labels = document.querySelectorAll("label");
+
+        inputs.forEach((input) => {
+            const attachedLabel = Array.from(labels).filter(selectedLabel => selectedLabel.getAttribute("for") == input.id)[0];
+            input.addEventListener('change', (e) => {
+                toggleSelection(attachedLabel, input);
+            })
+        })
+
+        function toggleSelection(label, input) {
+            if (input.checked) {
+                Array.from(labels).filter(nonSelected => nonSelected != label)[0].classList.remove("checked");
+                label.classList.add("checked");
+            } else {
+                return;
+            }
+        }
+
+        function onSubmit() {
+            const difficulty = Array.from(document.querySelectorAll("input[type='radio']")).filter(diff => diff.checked)[0].value;
+
+            window.location.href = "terminal.html?difficulty="+difficulty;
+            return false;
+        }
+    </script>
+</body>
+</html>
